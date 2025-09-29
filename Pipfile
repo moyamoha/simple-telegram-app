@@ -14,7 +14,7 @@ azure-storage-blob = "*"
 [dev-packages]
 
 [scripts]
-web = "python -m uvicorn --host 127.0.0.1 --reload main:app"
+web = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
 
 [requires]
 python_version = "3.13"

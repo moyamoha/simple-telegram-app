@@ -38,9 +38,6 @@ class MyTelegramClient:
     async def get_channels(self):
         async with self.client:
             dialogs = await self.client.get_dialogs()
-            print(dialogs[0])
-            for dialog in dialogs:
-                print(dialog.id, dialog.name, dialog.is_channel)
             channels = [dialog for dialog in dialogs if dialog.is_channel]
         return channels
 
@@ -101,7 +98,6 @@ class MyTelegramClient:
             return None
     
     async def mark_messages_as_read(self, channel_username_or_id: Union[int, str], message_ids: list[int]):
-        print(channel_username_or_id)
         if (isinstance(channel_username_or_id, str) and is_str_digit_like(channel_username_or_id)) or isinstance(channel_username_or_id, int):
             channel_username_or_id = int(channel_username_or_id)
         async with self.client:
