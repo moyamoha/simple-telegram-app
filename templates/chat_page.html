@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/chats.css">
+{% endblock %}
+
+{% block content %}
+    <h4>Yahya Salimi</h4>
+    <div class="chat-window">
+
+
+        <div class="chat-message-row received-message">
+            <div class="chat-message-text">سلام شیخا چطوری؟</div>
+            <div class="chat-message-sender">MR</div>
+        </div>
+        <div class="chat-message-row sent-message">
+            <div class="chat-message-text">و علیک السلام خوبم تو چطوری؟</div>
+            <div class="chat-message-sender">YS</div>
+        </div>
+            <div class="chat-message-row sent-message">
+            <div class="chat-message-text">خوبی بخیری؟</div>
+            <div class="chat-message-sender">YS</div>
+        </div>
+        <div class="chat-message-row received-message">
+            <div class="chat-message-text">خوبم شیخ، تو چطوری؟</div>
+            <div class="chat-message-sender">MR</div>
+        </div>
+    </div>
+{% endblock %}

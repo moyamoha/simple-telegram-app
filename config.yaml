@@ -1,0 +1,10 @@
+db:
+  host: localhost
+  user: yahya
+  password: ${DB_PASSWORD}
+  name: defaultdb
+  port: 7010
+  url: ${DB_URL}
+telegram:
+  app_api_id: 20670028
+  app_api_hash: ${TELEGRAM_APP_API_HASH}

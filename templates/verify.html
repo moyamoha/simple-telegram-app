@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
+{% block content %}
+    <h1>Verify Phone Number</h1>
+    <form action="/auth/verify-code" method="post" class="login-form">
+        <div class="login-form-row">
+            <label for="code">Verification Code:</label>
+            <input type="text" id="code" name="code" required>
+        </div>
+        <button class="login-button" type="submit">Verify</button>
+    </form>
+
+    <script>
+        document.querySelector('.login-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form submission for validation
+            const codeInput = document.getElementById('code');
+            const codePattern = /^\d{4,6}$/; // Simple pattern for 4 to 6 digit code
+
+            const phoneNumber = window.localStorage.getItem('phone_number');
+            if (!phoneNumber) {
+                alert('Phone number is missing. Please login again.');
+                window.location.href = '/login';
+                return;
+            }
+
+            if (!codePattern.test(codeInput.value)) {
+                event.preventDefault();
+                alert('Please enter a valid verification code (4 to 6 digits).');
+            }
+            else {
+                try {
+                    const response = await fetch('/auth/verify-code', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            code: codeInput.value,
+                            phone_number: phoneNumber
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const result = await response.json();
+                    window.localStorage.removeItem('phone_number');
+                    window.location.href = '/channels'
+                } catch (error) {
+                    
+                }
+            }
+            
+        });
+    </script>
+{% endblock %}

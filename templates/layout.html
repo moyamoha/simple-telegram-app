@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <title>Tele Channel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    {% endblock %}
+</head>
+<head>
+</head>
+<body>
+    <header>
+        <div class="logo">Tele Channel</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/channels">Channels</a>
+            <a href="/chats">Chats</a>
+            <a href="/about">About</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        &copy; 2025 Tele Channel. All rights reserved.
+    </footer>
+</body>
+</html>

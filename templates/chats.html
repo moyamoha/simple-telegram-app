@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/channels.css">
+{% endblock %}
+
+{% block content %}
+    <h1>Available Chats</h1>
+    <div id="pinned" class="tab-content" style="display:block;">
+        <div class="channels-list">
+            {% for chat in chats %}
+                <div class="chat-card">
+                    <h4>{{ chat.name }}</h4>
+                    <div>
+                        <ul>Chats participants
+                            {% for participant in chat.participants %}
+                                <li>
+                                    <span>{{ participant.id }}</span>
+                                    <span>{{ participant.name }}</span>
+                                    <span>{{ participant.username }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <p>{{ chat.id }}</p>
+                    <a href="/chats/test">Visit chat</a>
+                </div>
+            {% else %}
+                <p>No chats available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        // function showTab(tabId) {
+        //     document.querySelectorAll('.tab-content').forEach(function(tab) {
+        //         tab.style.display = 'none';
+        //     });
+        //     document.getElementById(tabId).style.display = 'block';
+        //     document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        //         btn.classList.remove('active');
+        //     });
+        //     event.target.classList.add('active');
+        // }
+    </script>
+{% endblock %}

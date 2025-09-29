@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = {extras = ["standard"], version = "*"}
+tortoise-orm = {extras = ["aiomysql"], version = "*"}
+telethon = "*"
+dependency-injector = "*"
+dotenv = "*"
+azure-storage-blob = "*"
+
+[dev-packages]
+
+[scripts]
+web = "python -m uvicorn --host 127.0.0.1 --reload main:app"
+
+[requires]
+python_version = "3.13"

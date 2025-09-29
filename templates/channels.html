@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/channels.css">
+{% endblock %}
+
+{% block content %}
+    <h1>Available Channels</h1>
+    <div class="tabs">
+        <button class="tab-btn" onclick="showTab('pinned')">Pinned</button>
+        <button class="tab-btn" onclick="showTab('active')">Active</button>
+        <button class="tab-btn" onclick="showTab('archived')">Archived</button>
+    </div>
+    <div id="pinned" class="tab-content" style="display:block;">
+        <div class="channels-list">
+            {% for channel in channels if channel.status == 'pinned' %}
+                <div class="channel-card">
+                    <h4>{{ channel.title }}</h4>
+                    {% if channel.username %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.username) }}">Visit Channel</a>
+                    {% elif channel.id %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.id) }}">Visit Channel</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No pinned channels available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="active" class="tab-content" style="display:none;">
+        <div class="channels-list">
+            {% for channel in channels if channel.status == 'active' %}
+                <div class="channel-card">
+                    <h3>{{ channel.title }}</h3>
+                    <p>{{ channel.description }}</p>
+                    {% if channel.username %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.username) }}">Visit Channel</a>
+                    {% elif channel.id %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.id) }}">Visit Channel</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No active channels available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="archived" class="tab-content" style="display:none;">
+        <div class="channels-list">
+            {% for channel in channels if channel.status == 'archived' %}
+                <div class="channel-card">
+                    <h3>{{ channel.title }}</h3>
+                    <p>{{ channel.id }}</p>
+                    <p>{{ channel.username }}</p>
+                    <p>{{ channel.description }}</p>
+                    {% if channel.username %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.username) }}">Visit Channel</a>
+                    {% elif channel.id %}
+                        <a href="{{ '/channels/{}/messages'.format(channel.id) }}">Visit Channel</a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No archived channels available.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(function(tab) {
+            tab.style.display = 'none';
+        });
+        document.getElementById(tabId).style.display = 'block';
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+    </script>
+{% endblock %}

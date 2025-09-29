@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
+{% block content %}
+    <h1>Login to Tele Channel</h1>
+    <form class="login-form">
+        <div class="login-form-row">
+            <label for="phone_number">Phone :</label>
+            <input type="tel" id="phone_number" name="phone_number" required>
+        </div>
+        <button class="login-button" type="submit">Login</button>
+    </form>
+
+    <script>
+        document.querySelector('.login-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form submission for validation
+            const phoneInput = document.getElementById('phone_number');
+            const phonePattern = /^\+\d{10,15}$/; // Simple pattern for international format
+
+            if (!phonePattern.test(phoneInput.value)) {
+                event.preventDefault();
+                alert('Please enter a valid phone number in international format (e.g., +1234567890).');
+            }
+            else {
+                try {
+                    const response = await fetch('/auth/send-code', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phone_number: phoneInput.value
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const result = await response.json();
+                    if (result && result.message === "Already authenticated") {
+                        window.location.href = `/channels`
+                        return;
+                    }
+                    window.localStorage.setItem('phone_number', phoneInput.value);
+                    window.location.href = `/verify`
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+
+        });
+    </script>
+{% endblock %}

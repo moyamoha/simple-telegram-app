@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/static/css/channels.css">
+{% endblock %}
+
+{% block content %}
+    <div class="messages-container">
+        <h1 dir="rtl">{{ channel.title }}</h1>
+        <p>{{ channel.id }}</p>
+        <div class="messages-actions">
+            <button onclick="window.location.href='/channels'">Back to Channels</button>
+            <button onclick="window.location.reload();">Refresh</button>
+            {% if messages|length > 0 %}
+                <button
+                    id="mark-read-btn"
+                    data-ids="{{ messages | map(attribute='id') | list | tojson }}"
+                    data-channel="{{ channel.username if channel.username else channel.id }}"
+                >
+                    Mark all as read
+                </button>
+            {% endif %}
+        </div>
+        {% for msg in messages %}
+            <div class="message-card">
+                <span class="timestamp">{{ msg.date }}</span>
+                <p dir="rtl">{{ msg.message }}</p>
+
+                {% if msg.media_type %}
+                    <div class="message-media">
+                        {% if "image" in msg.media_type %}
+                            <img src="{{ msg.link }}" loading="lazy" class="blur-image" alt="Image" style="max-width: 400px; max-height: 400px;">
+                        {% elif "video" in msg.media_type %}
+                            <video poster="/static/images/video_placeholder.png" controls style="max-width: 400px; max-height: 400px;" preload="none" class="media_{{ msg.id }}">
+                                <source src="{{ msg.link }}" type="{{ msg.media_type }}">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if msg.reactions %}
+                    <div class="message-reactions">
+                        {% for reaction in msg.reactions %}
+                            <span class="reaction">
+                                <span>{{ reaction.emoticon if reaction.emoticon else '👍' }}</span>
+                                <span style="font-size: 0.8rem;">{{ reaction.count }}</span>
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>No unread messages available.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+
+        const markReadButton = document.getElementById('mark-read-btn');
+        const messageIds = JSON.parse(markReadButton.getAttribute('data-ids'));
+        const channelUsername = markReadButton.getAttribute('data-channel');
+
+        markReadButton.addEventListener('click', async function() {
+            if (messageIds.length === 0) {
+                return;
+            }
+            await markAllAsRead(messageIds, channelUsername);
+        });
+
+        function isStringAllDigits(str) {
+            if (typeof str !== 'string') return false;
+            if (str.trim() === '') return false;
+            if (str.startsWith('-')) {
+                str = str.slice(1);
+            }
+            return /^\d+$/.test(str);
+        }
+
+
+        async function markAllAsRead(messages, channel) {
+            if (!messages || messages.length === 0) return;
+            if (!channel || (typeof channel === 'string' && !channel.trim())) return;
+            if (typeof channel === 'string' && isStringAllDigits(channel)) {
+                if (!channel.startsWith('-100')) {
+                    channel = `-100${channel}`;
+                }
+                channel = parseInt(channel, 10);
+                if (isNaN(channel)) return;
+            }
+            try {
+                markReadButton.textContent = 'processing...';
+                markReadButton.disabled = true;
+                const response = await fetch('/messages/mark-read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: messages,
+                        channel_username: `${channel}`
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                if (result && result.success) {
+                    markReadButton.style.display = 'none';
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                markReadButton.textContent = 'Mark all as read';
+                markReadButton.disabled = false;
+            }
+                
+            // window.location.reload();
+        }
+    </script>
+{% endblock %}
