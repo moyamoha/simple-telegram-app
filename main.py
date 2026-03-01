@@ -14,7 +14,7 @@ from session_management import get_session_id_from_request
 
 def create_app():
     load_dotenv()
-    app = FastAPI(openapi_url="/api/openapi.json", docs_url="/api/docs", redoc_url="/api/redoc", default_response_class=HTMLResponse)
+    app = FastAPI(openapi_url="/api/openapi.json", docs_url="/api/docs", redoc_url="/api/redoc")
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(auth_router)
     app.include_router(channels_router)
@@ -36,6 +36,11 @@ templates = Jinja2Templates(directory="templates")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/up")
+@app.head("/up")
+async def up():
+    return { "message": "App is starting/started" }
+
 @app.get("/login")
 async def login_page(request: Request):
     session_id = get_session_id_from_request(request)
@@ -47,7 +52,7 @@ async def login_page(request: Request):
 async def verify_page(request: Request):
     return templates.TemplateResponse("verify.html", {"request": request})
 
-@app.get("/test")
-async def verify_code(request: Request):
-    session_id = get_session_id_from_request(request)
-    return PlainTextResponse(content=f"Session ID from cookie: {session_id}")
+# @app.get("/test")
+# async def verify_code(request: Request):
+#     session_id = get_session_id_from_request(request)
+#     return PlainTextResponse(content=f"Session ID from cookie: {session_id}")
